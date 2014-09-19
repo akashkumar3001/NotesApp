@@ -1,0 +1,9 @@
+[submodule "DZAKNotes/vendors/DZKit"]
+	path = DZAKNotes/vendors/DZKit
+	url = git@github.com:dezinezync/DZKit.git
+[submodule "DZAKNotes/vendors/DZYAPDatabase"]
+	path = DZAKNotes/vendors/DZYAPDatabase
+	url = https://github.com/dezinezync/DZYAPDatabase.git
+[submodule "DZAKNotes/vendors/YapDatabase"]
+	path = DZAKNotes/vendors/YapDatabase
+	url = git@github.com:yapstudios/YapDatabase.git
