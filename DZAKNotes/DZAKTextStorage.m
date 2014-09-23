@@ -13,8 +13,6 @@
     BOOL _processEditing;
 }
 
-@property (nonatomic, assign) BOOL hasAssignedTitle;
-
 @end
 
 @implementation DZAKTextStorage
@@ -84,7 +82,14 @@
 {
     
 //    NSLog(@"%@", NSStringFromRange(extendedRange));
-   
+    if (self.isSettingUp) {
+        
+        self.isSettingUp = NO;
+        
+        
+        return;
+    }
+    
     NSString *text = [[self string] substringWithRange:extendedRange];
     
 //    Has gone to next line and hasn't set Title. So set the title.
@@ -101,7 +106,6 @@
             NSString * strX = [self string];
             strX = [strX stringByReplacingOccurrencesOfString:@"\n" withString:@""];
             self.noteTitle = strX;
-            
             NSRange titleRange = [[self string] rangeOfString:self.noteTitle];
             
             if(titleRange.location == NSNotFound || titleRange.length > [self string].length) return;
@@ -114,7 +118,7 @@
         
     }
 //    Still editing title. Hasn't gone to the next line.
-    else if(!self.hasAssignedTitle || extendedRange.location == 0)
+    else if(!self.hasAssignedTitle || extendedRange.location == 0 )
     {
         [self setAttributes:@{NSFontAttributeName:[self boldFont]} range:extendedRange];
         
@@ -157,7 +161,7 @@
         
     }
     
-//    NSLog(@"Title: %@\nBody: %@", self.noteTitle, self.noteBody);
+  NSLog(@"Title: %@\nBody: %@", self.noteTitle, self.noteBody);
     
 }
 
@@ -169,7 +173,7 @@
     
     NSString * strX = [self string];
     strX = [strX substringFromIndex:self.noteTitle.length+1];
-    
+    NSLog(@"\nBodytext : %@",strX);
     return strX;
 }
 

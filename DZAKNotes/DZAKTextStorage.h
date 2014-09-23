@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSMutableAttributedString *backingStore;
 @property (nonatomic,strong) NSString * noteTitle ,*noteBody;
+@property (nonatomic, assign) BOOL isSettingUp, hasAssignedTitle;
 
 - (UIFont *)boldFont;
 

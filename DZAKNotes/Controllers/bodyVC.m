@@ -40,10 +40,28 @@
     [self createTextView];
     self.bodyTextView.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     self.bodyTextView.frame = self.view.bounds;
-    
-    if(self.textBody)
+   
+    if(self.note)
     {
-        self.bodyTextView.attributedText = self.textBody;
+        self.textStorage.isSettingUp = YES;
+        
+        self.textStorage.noteTitle = self.note.title;
+        self.textStorage.noteBody = self.note.body;
+        self.textStorage.hasAssignedTitle = YES;
+        
+        NSString *composedString = [NSString stringWithFormat:@"%@\n%@", self.note.title, self.note.body];
+        
+        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:composedString attributes:nil];
+        
+        UIFont * font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        NSString * fontName = font.fontName;
+        fontName = [fontName stringByReplacingOccurrencesOfString:@"-Regular" withString:@"-Bold"];
+        
+        UIFont *boldFont = [UIFont fontWithName:fontName size:font.pointSize];
+        
+        [attrs addAttribute:NSFontAttributeName value:boldFont range:[composedString rangeOfString:self.note.title]];
+        
+        self.bodyTextView.attributedText = attrs;
     }
     
 }
@@ -98,9 +116,21 @@
         return;
     }
     
-    DZAKNotes * myNote = [DZAKNotes instanceFromDictionary:@{@"title":self.textStorage.noteTitle, @"body":self.textStorage.noteBody}];
-    
-    [myNote saveToDB];
+    if(self.note)
+    {
+        
+        self.note.title = self.textStorage.noteTitle;
+        self.note.body = self.textStorage.noteBody;
+        
+        [self.note saveToDB];
+        
+    }
+    else
+    {
+        DZAKNotes * myNote = [DZAKNotes instanceFromDictionary:@{@"title":self.textStorage.noteTitle, @"body":self.textStorage.noteBody}];
+        
+        [myNote saveToDB];
+    }
     
     asyncMain(^{
         

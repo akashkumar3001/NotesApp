@@ -43,12 +43,9 @@ NSString * const cellID = @"NotesTVCCell";
     
     self.add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
     self.navigationItem.rightBarButtonItem = self.add;
-    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellID];
-    
-    _dataSource = [DZBasicDatasource datasourceWithView:self.tableView];
+     _dataSource = [DZBasicDatasource datasourceWithView:self.tableView];
     self.dataSource.delegate = self;
-    
     [DZAKNotes getAllNotesWithSuccess:^(NSArray *notes) {
         
         self.dataSource.data = notes.mutableCopy;
@@ -57,17 +54,35 @@ NSString * const cellID = @"NotesTVCCell";
     
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    DZAKNotes * note = [self.dataSource.data objectAtIndex:indexPath.row];
+    [note deleteFromDB];
+    [self.dataSource.data removeObjectAtIndex:indexPath.row];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+    
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     
     [super viewDidAppear:animated];
-    
+    LogInt([self.dataSource.data count]);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
        
         [DZAKNotes getAllNotesWithSuccess:^(NSArray *notes) {
            
             self.dataSource.data = [notes mutableCopy];
-            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+            LogInt([self.dataSource.data count]);
         }];
         
     });
@@ -111,22 +126,12 @@ NSString * const cellID = @"NotesTVCCell";
     
     bodyVC * view = [bodyVC new];
     
-    NSString *composedString = [NSString stringWithFormat:@"%@\n%@", note.title, note.body];
-    
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:composedString attributes:nil];
-    
-    UIFont * font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    NSString * fontName = font.fontName;
-    fontName = [fontName stringByReplacingOccurrencesOfString:@"-Regular" withString:@"-Bold"];
-    
-    UIFont *boldFont = [UIFont fontWithName:fontName size:font.pointSize];
-    
-    [attrs addAttribute:NSFontAttributeName value:boldFont range:[composedString rangeOfString:note.title]];
-    
-    view.textBody = attrs;
+    view.note = note;
     
     [self.navigationController pushViewController:view animated:YES];
     
 }
+
+
 
 @end

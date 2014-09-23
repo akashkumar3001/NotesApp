@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "DZAKTextStorage.h"
+#import "DZAKNotes.h"
 
 @interface bodyVC : UIViewController
 
-@property (nonatomic, strong) NSAttributedString * textBody;
+@property (nonatomic, strong) DZAKNotes * note;
 @property (nonatomic, strong) UIBarButtonItem * save;
 @property (nonatomic, strong) UITextView *bodyTextView;
 @property (nonatomic,strong) DZAKTextStorage * textStorage;
